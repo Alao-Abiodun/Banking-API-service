@@ -17,19 +17,19 @@ const { TOKEN } = process.env;
 // GET ALL USERS IN THE SYSTEM
 exports.fetchUsers = async (req, res) => {
   try {
-    //   let userList = await client.get("users");
-    //   if (userList) {
-    //     Response(res).success({ data: JSON.parse(userList) }, 200, {
-    //       meta_data: "from cache",
-    //     });
-    //   } else {
-    //     const users = await User.find({});
-    //     client.set("users", JSON.stringify(users));
-    //     Response(res).success({ users }, 200, { meta_data: "from server" });
-    //   }
+    let userList = await client.get("users");
+    if (userList) {
+      Response(res).success({ data: JSON.parse(userList) }, 200, {
+        meta_data: "from cache",
+      });
+    } else {
+      const users = await User.find({});
+      client.set("users", JSON.stringify(users));
+      Response(res).success({ users }, 200, { meta_data: "from server" });
+    }
 
-    const users = await User.find({});
-    Response(res).success({ users }, 200);
+    // const users = await User.find({});
+    // Response(res).success({ users }, 200);
   } catch (error) {
     console.log(error);
     Response(res).error(error.message, error.code);
