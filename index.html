@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recieve Payment</title>
+  </head>
+  <body>
+    <form>
+      <script src="https://checkout.flutterwave.com/v3.js"></script>
+      <button type="button" onClick="makePayment()">Pay Now</button>
+    </form>
+
+    <script>
+      function makePayment() {
+        FlutterwaveCheckout({
+          public_key: "FLWPUBK_TEST-47f78697b8e7f3a616e8b428af96d4a4-X",
+          tx_ref: "hooli-tx-1920bbtyt",
+          amount: 1000,
+          currency: "NGN",
+          country: "NG",
+          payment_options: "card",
+          // specified redirect URL
+          redirect_url: "http://localhost:9100/response",
+          customer: {
+            email: "demomail@gmail.com",
+            phone_number: "08088098622",
+            name: "Idris Olubisi",
+          },
+          callback: function (data) {
+            console.log(data);
+          },
+          onclose: function () {
+            // close modal
+          },
+          customizations: {
+            title: "Wallet Crypto",
+            description: "User Waller CryptoPay",
+            logo: "https://cdn.iconscout.com/icon/premium/png-256-thumb/payment-2193968-1855546.png",
+          },
+        });
+      }
+    </script>
+
+    <!-- <script>
+      function makePayment() {
+        FlutterwaveCheckout({
+          public_key: "FLWSECK_TEST-84e558ba82cd06de96aaf88e586dc1ed-X",
+          tx_ref: "hooli-tx-1920bbtyt",
+          amount: 1000,
+          currency: "NGN",
+          country: "NG",
+          payment_options: " ",
+          redirect_url: "http://localhost:9100/response",
+          customer: {
+            email: "african@yopmail.com",
+            phone_number: "09025244070",
+            name: "Abiodun Alao",
+          },
+          callback: function (data) {
+            console.log(data);
+          },
+          onclose: function () {
+            // close modal
+          },
+          customizations: {
+            title: "Wallet Crypto",
+            description: "User Waller CryptoPay",
+            logo: "https://cdn.iconscout.com/icon/premium/png-256-thumb/payment-2193968-1855546.png",
+          },
+        });
+      }
+    </script> -->
+  </body>
+</html>
