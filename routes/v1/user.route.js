@@ -2,17 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { validateUserToken } = require("../../middleware/validation");
 
-const {
-  register,
-  login,
-  fetchUsers,
-  userCount,
-} = require("../../controllers/user.controller");
+const { login, deposit } = require("../../controllers/user.controller");
 
-router.get("/fetch", fetchUsers);
-router.get("/count", userCount);
+// USER
 
-router.post("/register", register);
-router.post("/login", login);
+// login
+router.post("/login", validateUserToken, login);
+// deposit
+router.post("/deposit", validateUserToken, deposit);
 
 module.exports = router;

@@ -2,28 +2,13 @@ const { Schema, model } = require("mongoose");
 
 const transactionSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    walletId: { type: Schema.Types.ObjectId, ref: "Wallet" },
-    transactionId: { type: Number, trim: true },
-    name: { type: String, required: [true, "name is required"], trim: true },
-    email: { type: String, required: [true, "email is required"], trim: true },
-    phone: { type: String },
-    amount: { type: String, required: [true, "amount is required"] },
-    currency: {
+    amount: { type: Number, default: 0 },
+    payment_status: {
       type: String,
-      required: [true, "currency is required"],
-      enum: ["NGN", "USD", "EUR", "GBP"],
-    },
-    paymentStatus: {
-      type: String,
-      enum: ["successfull", "failed", "pending"],
+      enum: ["successful", "failed", "pending", "reverted"],
       default: "pending",
     },
-    paymentGateWay: {
-      type: String,
-      required: [true, "payment gateway is required"],
-      enum: ["flutterwave", "paystack"],
-    },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
