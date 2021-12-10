@@ -44,7 +44,6 @@ exports.deposit = async (req, res) => {
   try {
     // check if user exist in the database before they can make a deposit
     const { _id } = req.decoded;
-    console.log(_id);
     const { email, amount } = req.body;
     const userExist = await User.findOne({ email });
     if (!userExist) {

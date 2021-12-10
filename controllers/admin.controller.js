@@ -40,3 +40,17 @@ exports.register = async (req, res) => {
     Response(res).error(error, error.code);
   }
 };
+
+exports.removeUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      throw Error("Id Not Found!", "BAD REQUEST", 400);
+    }
+    await User.findOneAndDelete({ _id: id });
+    return res.status(200).json({ message: "User removed successfully" });
+  } catch (error) {
+    console.log(error);
+    Response(res).error(error, error.code);
+  }
+};
