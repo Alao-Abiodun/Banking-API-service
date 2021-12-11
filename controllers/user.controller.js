@@ -74,3 +74,26 @@ exports.deposit = async (req, res) => {
     Response(res).error(error.message, error.code);
   }
 };
+
+exports.withdraw = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const { amountToWithdraw } = req.body;
+    const user = await User.findOne({ email }).select(["acctBalance"]);
+    if (!user) {
+      throw Error("User Not Found", "BAD REQUEST", 401);
+    }
+    user.acctBalance -= amountToWithdraw;
+    const userBalance = await User.findOneAndUpdate(
+      { email },
+      { acctBalance: user.acctBalance },
+      { new: true, upsert: true }
+    );
+    return res.status(200).json({
+      message: `user withdraw ${amountToWithdraw} successfully`,
+      data: userBalance,
+    });
+  } catch (error) {
+    Response(res).error(error.message, error.code);
+  }
+};
