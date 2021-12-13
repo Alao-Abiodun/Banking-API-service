@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const Deposit = require("../models/deposit.model");
+const Withdraw = require("../models/withdraw.model");
 const Transaction = require("../models/transactions.model");
 const Response = require("../lib/response");
 const Error = require("../lib/error");
@@ -50,21 +52,25 @@ exports.deposit = async (req, res) => {
       throw Error(
         "User does not have an account?, Please create an account",
         "BAD REQUEST",
-        200
+        401
       );
     }
-    const newTransaction = new Transaction({
-      amount,
+    const newDeposit = new Deposit({
+      amount_deposited: amount,
       payment_status: "successful",
       userId: _id,
     });
-    newTransaction.save();
-    userExist.acctBalance += newTransaction.amount;
+    newDeposit.save();
+    userExist.acctBalance += newDeposit.amount_deposited;
     await User.findOneAndUpdate(
       { _id: _id },
       { acctBalance: userExist.acctBalance },
       { new: true, upsert: true }
     );
+    const newTransaction = new Transaction({
+      user_deposited: newDeposit._id,
+    });
+    newTransaction.save();
     return res.status(201).json({
       message: "User deposited successfully",
     });
@@ -77,6 +83,7 @@ exports.deposit = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
+    const { _id } = req.decoded;
     const { email } = req.query;
     const { amountToWithdraw } = req.body;
     const user = await User.findOne({ email }).select(["acctBalance"]);
@@ -84,14 +91,75 @@ exports.withdraw = async (req, res) => {
       throw Error("User Not Found", "BAD REQUEST", 401);
     }
     user.acctBalance -= amountToWithdraw;
+    const newWithdraw = new Withdraw({
+      amount_withdrawn: amountToWithdraw,
+      payment_status: "successful",
+      userId: _id,
+    });
+    newWithdraw.save();
     const userBalance = await User.findOneAndUpdate(
       { email },
       { acctBalance: user.acctBalance },
       { new: true, upsert: true }
     );
+    const newTransaction = new Transaction({
+      user_withdrawn: newWithdraw._id,
+    });
+    newTransaction.save();
     return res.status(200).json({
       message: `user withdraw ${amountToWithdraw} successfully`,
       data: userBalance,
+    });
+  } catch (error) {
+    Response(res).error(error.message, error.code);
+  }
+};
+
+exports.fetchTransactions = async (req, res) => {
+  try {
+    // const { _id } = req.decoded;
+    const allTransactions = await Transaction.find({})
+      .populate("user_deposited")
+      .populate("user_withdrawn");
+    return res
+      .status(200)
+      .json({ message: "Successful", data: allTransactions });
+  } catch (error) {
+    Response(res).error(error.message, error.code);
+  }
+};
+
+exports.transferFunds = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const { _id } = req.decoded;
+    const { amountTransferred } = req.body;
+    const userToSendFunds = await User.findOne({ _id: _id }).select([
+      "+firstname",
+      "+lastname",
+    ]);
+    const userToRecieveFunds = await User.findOne({ _id: id }).select([
+      "+firstname",
+      "+lastname",
+    ]);
+    if (!userToSendFunds) {
+      throw Error("User doest not exist", "BAD REQUEST", 401);
+    }
+    if (!userToRecieveFunds) {
+      throw Error("User doest not exist", "BAD REQUEST", 401);
+    }
+    userToRecieveFunds.acctBalance += amountTransferred;
+    userToSendFunds.acctBalance -= amountTransferred;
+    const newTransaction = new Transaction({
+      userSendFunds: _id,
+      userRecieveFunds: id,
+    });
+    newTransaction.save();
+    return res.status(200).json({
+      message: "Transfer successful",
+      userToSendFunds,
+      userToRecieveFunds,
+      amountTransferred,
     });
   } catch (error) {
     Response(res).error(error.message, error.code);

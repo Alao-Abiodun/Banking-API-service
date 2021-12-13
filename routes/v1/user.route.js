@@ -6,6 +6,8 @@ const {
   login,
   deposit,
   withdraw,
+  fetchTransactions,
+  transferFunds,
 } = require("../../controllers/user.controller");
 
 // USER
@@ -16,5 +18,9 @@ router.post("/login", login);
 router.post("/deposit", validateUserToken, deposit);
 
 router.post("/withdraw", validateUserToken, withdraw);
+
+router.get("/transactions", fetchTransactions);
+
+router.put("/transfer", validateUserToken, transferFunds);
 
 module.exports = router;
