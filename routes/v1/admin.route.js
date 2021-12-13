@@ -13,6 +13,6 @@ router.post("/register", register);
 
 router.delete("/delete/:id", removeUser);
 
-// router.put("/transfer/reverse", reverseTransfer);
+router.put("/transfer/reverse", reverseTransfer);
 
 module.exports = router;

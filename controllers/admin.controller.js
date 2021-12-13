@@ -55,39 +55,39 @@ exports.removeUser = async (req, res) => {
   }
 };
 
-// exports.reverseTransfer = async (req, res) => {
-//   try {
-//     const { sender, reciever } = req.params;
-//     const userToSendFunds = await User.findOne({ _id: sender }).select([
-//       "+firstname",
-//       "+lastname",
-//     ]);
-//     const userToRecieveFunds = await User.findOne({ _id: reciever }).select([
-//       "+firstname",
-//       "+lastname",
-//     ]);
-//     if (!userToSendFunds) {
-//       throw Error("User doest not exist", "BAD REQUEST", 401);
-//     }
-//     if (!userToRecieveFunds) {
-//       throw Error("User doest not exist", "BAD REQUEST", 401);
-//     }
-//     userToRecieveFunds.acctBalance -= amountTransferred;
-//     userToSendFunds.acctBalance += amountTransferred;
-//     const newTransaction = new Transaction({
-//       userSendFunds: _id,
-//       userRecieveFunds: id,
-//     });
-//     newTransaction.save();
-//     return res.status(200).json({
-//       message: "Transfer Revoked",
-//       userToSendFunds,
-//       userToRecieveFunds,
-//       amountTransferred,
-//     });
-//   } catch (error) {
-//     Response(res).error(error, error.code);
-//   }
-// };
+exports.reverseTransfer = async (req, res) => {
+  try {
+    const { sender, reciever } = req.params;
+    const userToSendFunds = await User.findOne({ _id: sender }).select([
+      "+firstname",
+      "+lastname",
+    ]);
+    const userToRecieveFunds = await User.findOne({ _id: reciever }).select([
+      "+firstname",
+      "+lastname",
+    ]);
+    if (!userToSendFunds) {
+      throw Error("User doest not exist", "BAD REQUEST", 401);
+    }
+    if (!userToRecieveFunds) {
+      throw Error("User doest not exist", "BAD REQUEST", 401);
+    }
+    userToRecieveFunds.acctBalance -= amountTransferred;
+    userToSendFunds.acctBalance += amountTransferred;
+    const newTransaction = new Transaction({
+      userSendFunds: _id,
+      userRecieveFunds: id,
+    });
+    newTransaction.save();
+    return res.status(200).json({
+      message: "Transfer Revoked",
+      userToSendFunds,
+      userToRecieveFunds,
+      amountTransferred,
+    });
+  } catch (error) {
+    Response(res).error(error, error.code);
+  }
+};
 
 exports.disableUserAccount = async (req, res) => {};
