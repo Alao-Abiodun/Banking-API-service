@@ -148,6 +148,9 @@ exports.transferFunds = async (req, res) => {
     if (!userToRecieveFunds) {
       throw Error("User doest not exist", "BAD REQUEST", 401);
     }
+    if (amountTransferred > userToSendFunds.acctBalance) {
+      throw Error("Insufficient Funds", "BAD TRANSACTIONS", 401);
+    }
     userToRecieveFunds.acctBalance += amountTransferred;
     userToSendFunds.acctBalance -= amountTransferred;
     const newTransaction = new Transaction({

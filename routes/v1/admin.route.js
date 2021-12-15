@@ -6,6 +6,7 @@ const {
   register,
   removeUser,
   reverseTransfer,
+  disableUserAccount,
 } = require("../../controllers/admin.controller");
 
 // ADMIN
@@ -14,5 +15,7 @@ router.post("/register", register);
 router.delete("/delete/:id", removeUser);
 
 router.put("/transfer/reverse", reverseTransfer);
+
+router.delete("/revoke", disableUserAccount);
 
 module.exports = router;
