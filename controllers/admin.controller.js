@@ -90,4 +90,23 @@ exports.reverseTransfer = async (req, res) => {
   }
 };
 
-exports.disableUserAccount = async (req, res) => {};
+exports.disableUserAccount = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      throw Error("User doest not exist", "BAD REQUEST", 401);
+    }
+    const disableUser = await User.findOneAndUpdate(
+      { _id: id },
+      { isDisabled: true },
+      { new: true, upsert: true }
+    );
+    return res.status(200).json({
+      message: "User account is disabled!",
+      disableUser,
+    });
+  } catch (error) {
+    Response(res).error(error, error.code);
+  }
+};

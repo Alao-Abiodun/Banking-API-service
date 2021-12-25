@@ -7,6 +7,11 @@ const userSchema = new Schema(
     email: { type: String, unique: true, select: false },
     password: { type: String, required: true, select: false },
     acctBalance: { type: Number, default: 0 },
+    isDisble: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     role: {
       type: String,
       enum: ["Admin", "User"],
